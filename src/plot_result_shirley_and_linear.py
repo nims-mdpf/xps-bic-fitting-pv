@@ -9,20 +9,18 @@
 # coding: utf-8
 import csv
 import os
+import re
 import shutil
 import sys
 from glob import glob
+from multiprocessing import Pool, Process
 
 import matplotlib
-import numpy as np
-import pandas as pd
-
-import re
-from multiprocessing import Pool, Process
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import numpy as np
+import pandas as pd
 from matplotlib.ticker import MaxNLocator, ScalarFormatter
-
 from myfunc import calc_AIC_BIC, get_value_from_settings
 
 matplotlib.use("Agg")
@@ -132,7 +130,9 @@ def get_prefered_result_by_BIC_groupbypeaks(dnm, numPeakMaxInput=None, figLevel=
         print("Not found", fnm)
         return
 
-    df3 = pd.read_csv(fnm, usecols=["numPeak", "method", "smoothing_point", "bic_gauss"])
+    df3 = pd.read_csv(
+        fnm, usecols=["numPeak", "method", "smoothing_point", "bic_gauss"]
+    )
 
     csvfile = dnm + "summary_BIC.csv"
     print("Output to ", csvfile)
@@ -242,7 +242,9 @@ def plot_input_spectrum(path, ylim=None):
     return
 
 
-def myplot_simple(x, y, xlab, ylab, pngfile, legends="", logx=False, logy=False, paper=False):
+def myplot_simple(
+    x, y, xlab, ylab, pngfile, legends="", logx=False, logy=False, paper=False
+):
     # PNGファイル出力
     print("Output to", pngfile)
 
@@ -442,7 +444,7 @@ def get_prefered_result(df2, key1, key2):
     values = [key2, method, m_SG, df2["numPeak"][m], df2[key1][m]]
 
     fname1 = f"./{method}/result_peak_search_mSG{m_SG:04d}.png"
-    fname2 = f'./prefered_result_by_{key2}_{method}_mSG{m_SG:04d}_numPeak{df2["numPeak"][m]}.png'
+    fname2 = f"./prefered_result_by_{key2}_{method}_mSG{m_SG:04d}_numPeak{df2['numPeak'][m]}.png"
     if os.path.exists(fname1):
         print("Copy from %s to %s" % (fname1, fname2))
         shutil.copy2(fname1, fname2)
@@ -465,10 +467,15 @@ def myplot_aic_bic(idHigherS, idLowerS, paper=False, figLevel=2):
             match = re.search(r"./(.*)/result_*", fitting_result_file)
         method = np.NaN if match is None else match.groups()[0]
 
-        if not (os.path.exists(fitting_result_file) and os.path.exists(fitting_parameter_file)):
+        if not (
+            os.path.exists(fitting_result_file)
+            and os.path.exists(fitting_parameter_file)
+        ):
             continue
         # print(fitting_result_file, fitting_parameter_file)
-        result = calc_AIC_BIC(fitting_result_file, fitting_parameter_file, idHigherS, idLowerS)
+        result = calc_AIC_BIC(
+            fitting_result_file, fitting_parameter_file, idHigherS, idLowerS
+        )
 
         if result is None:
             continue
@@ -530,7 +537,9 @@ def myplot_aic_bic(idHigherS, idLowerS, paper=False, figLevel=2):
     df2.to_csv("./summary_evalFunc_vs_mSG.csv")
 
     # 最小のピーク半値半幅がsettingsで指定した半値全幅/2より大きいものだけを選ぶ
-    minFWHM_threshold = get_value_from_settings("minFWHM_threshold", 0.2, "./*/settings.inp")
+    minFWHM_threshold = get_value_from_settings(
+        "minFWHM_threshold", 0.2, "./*/settings.inp"
+    )
     df2 = df2[[float(v) > minFWHM_threshold / 2 for v in df2["min_HWHM"]]]
 
     if len(df2) == 0:
@@ -784,9 +793,13 @@ def plot2Dhist_BIC(targetDir=".", binsX=None, binsY=100, rangeX=None, rangeY=Non
     if binsX is None:
         binsX = np.arange(0.0, x.max() + 2, 0.25)
 
-    fig = plot2Dhist_core(x, y, bins=[binsX, binsY], range=[rangeX, rangeY], cmap="rainbow", cmin=1)
+    fig = plot2Dhist_core(
+        x, y, bins=[binsX, binsY], range=[rangeX, rangeY], cmap="rainbow", cmin=1
+    )
 
-    pngfile = csvfile.replace("summary_evalFunc_vs_mSG.csv", "BIC_vs_NumPeak_hist2D.png")
+    pngfile = csvfile.replace(
+        "summary_evalFunc_vs_mSG.csv", "BIC_vs_NumPeak_hist2D.png"
+    )
     print(f"Output to {pngfile}")
     fig.savefig(pngfile, dpi=100)
     return
@@ -841,7 +854,9 @@ def plot_result_core(csvfile, idHigherS, idLowerS, paper=False, ylim=None, figLe
         label=peakLabel,
     )
     for c in peakList[1:]:
-        ax.plot(dfc["Binding_Energy(eV)"], dfc[c], color="#333333", lw=1, label="_nolegend_")
+        ax.plot(
+            dfc["Binding_Energy(eV)"], dfc[c], color="#333333", lw=1, label="_nolegend_"
+        )
     ax.plot(dfc["Binding_Energy(eV)"], dfc["background"], label="background")
 
     if ylim is not None:
@@ -894,10 +909,15 @@ def plot_result(
     if multi == 0:
         # シングルプロセスの場合
         for csvfile in csvfileList:
-            plot_result_core(csvfile, idHigherS, idLowerS, paper=paper, ylim=ylim, figLevel=figLevel)
+            plot_result_core(
+                csvfile, idHigherS, idLowerS, paper=paper, ylim=ylim, figLevel=figLevel
+            )
     else:
         # 並列処理の場合（複数引数を持つ関数を並列処理するためにラッパー関数をあいだに噛ませる）
-        argsList = [(csvfile, idHigherS, idLowerS, paper, ylim, figLevel) for csvfile in csvfileList]
+        argsList = [
+            (csvfile, idHigherS, idLowerS, paper, ylim, figLevel)
+            for csvfile in csvfileList
+        ]
 
         ompnumthreads = os.getenv("OMP_NUM_THREADS")
 
@@ -943,7 +963,11 @@ def get_recipeData():
     if os.path.exists(recipeFile):
         # Output recipeFile as it is
         with open(recipeFile, "r") as f:
-            print("\nrecipe file = \n--------------------\n" + f.read() + "--------------------\n")
+            print(
+                "\nrecipe file = \n--------------------\n"
+                + f.read()
+                + "--------------------\n"
+            )
         # Read recipe file to get options as dict format
         recipeData = {}
         with open(recipeFile, "r") as f:

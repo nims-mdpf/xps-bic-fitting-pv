@@ -12,14 +12,15 @@
 
 import math
 import subprocess
+from glob import glob
 
 import numpy as np
 import pandas as pd
 
-from glob import glob
 
-
-def calc_AIC_BIC(fitting_result_file, fitting_parameter_file, idHigherS=-1, idLowerS=-1):
+def calc_AIC_BIC(
+    fitting_result_file, fitting_parameter_file, idHigherS=-1, idLowerS=-1
+):
     # 高BEと低BEのインデックスを読み込む
     df = pd.read_csv(fitting_result_file, delimiter="=", header=None, nrows=2)
     idHigherOrg = df[1][0]
@@ -99,7 +100,9 @@ def calc_AIC_BIC(fitting_result_file, fitting_parameter_file, idHigherS=-1, idLo
     # 強度に依存したガウスノイズを仮定して，分散の最尤推定。
     # スケーリングを行うとデータそのものが変わってしまうため，AIC, BIC計算には不適切
     # スケーリングは行わずに逸脱度を計算
-    deviance_pgauss = (np.log(df1.fitting)).sum() + numData * (1.0 + np.log(2.0 * np.pi * param_b))
+    deviance_pgauss = (np.log(df1.fitting)).sum() + numData * (
+        1.0 + np.log(2.0 * np.pi * param_b)
+    )
     # そのときのAIC, BIC
     aic_pgauss = deviance_pgauss + 2.0 * numParam
     bic_pgauss = deviance_pgauss + np.log(numData) * numParam
@@ -152,7 +155,14 @@ def calc_AIC_BIC(fitting_result_file, fitting_parameter_file, idHigherS=-1, idLo
 def get_settings_as_dict(globkey="./*/settings.inp"):
     dict_settings = {}
     for f in glob(globkey):
-        df_settings = pd.read_csv(f, sep="\s+", comment="#", header=None, usecols=[0, 1], names=["key", "value"])
+        df_settings = pd.read_csv(
+            f,
+            sep=r"\s+",
+            comment="#",
+            header=None,
+            usecols=[0, 1],
+            names=["key", "value"],
+        )
         dict_settings = df_settings.set_index("key")["value"].to_dict()
     print(dict_settings)
     return dict_settings

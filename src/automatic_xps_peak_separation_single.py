@@ -9,14 +9,13 @@
 # # coding: utf-8
 
 import os
-import shutil
 import pathlib
+import shutil
 import subprocess
 import sys
 from glob import glob
 
 import pandas as pd
-
 from myfunc import get_value_from_settings
 
 # Specify the directory which has "activeshirley_gcc.exe" and "plot_result.py"
@@ -47,7 +46,9 @@ def exec_command(cmd, targetdir="./", logfile=""):
     if logfile == "":
         p = subprocess.Popen(cmd, cwd=targetdir, shell=True)
     else:
-        p = subprocess.Popen(cmd.split(), cwd=targetdir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(
+            cmd.split(), cwd=targetdir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
         with open(logfile, mode="w") as f:
             for line in p.stdout:
                 line = line.decode("utf-8").rstrip()
@@ -60,7 +61,9 @@ def exec_command(cmd, targetdir="./", logfile=""):
 def get_num_model(kwd):
     # 最小のピーク半値半幅が0.1eVより大きいモデルの個数を返す
     # minFWHM_threshold = get_minFWHM_threshold(f"./{kwd}/settings.inp")
-    minFWHM_threshold = get_value_from_settings("minFWHM_threshold", 0.2, f"./{kwd}/settings.inp")
+    minFWHM_threshold = get_value_from_settings(
+        "minFWHM_threshold", 0.2, f"./{kwd}/settings.inp"
+    )
     numModel = 0
     paramfileList = list(glob(f"./{kwd}/parameters_peak_search_mSG*.csv"))
     for paramfile in paramfileList:
@@ -138,7 +141,9 @@ def main(fnm, bgType="auto", figType="-minfig", pptFlag=False, devFlag=False):
 
     # 無用の中間ファイルを削除
     if not devFlag:
-        print("remove linear/ shirley/ prefered_*.png py_*.png summary_evalFunc_minvalue.csv summary_evalFunc_vs_mSG.csv")
+        print(
+            "remove linear/ shirley/ prefered_*.png py_*.png summary_evalFunc_minvalue.csv summary_evalFunc_vs_mSG.csv"
+        )
         [shutil.rmtree(d) for d in ["linear", "shirley"] if os.path.exists(d)]
         [
             [os.remove(f) for f in glob(key)]
@@ -154,7 +159,9 @@ def main(fnm, bgType="auto", figType="-minfig", pptFlag=False, devFlag=False):
 
 
 def show_usage():
-    print(f"Usage:\n        {sys.argv[0]} <csv file> [-d] [-s|-l] [-p] [-allfig|-minfig|-nofig]")
+    print(
+        f"Usage:\n        {sys.argv[0]} <csv file> [-d] [-s|-l] [-p] [-allfig|-minfig|-nofig]"
+    )
     print(f"Example:\n        {sys.argv[0]} spectrumdata.csv")
     print("        <csv file> is a XPS data file in CSV-format.")
     print('        "-d" for developer mode')

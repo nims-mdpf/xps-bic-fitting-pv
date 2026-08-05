@@ -7,31 +7,33 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-//#include <vector>
+// #include <vector>
 
 using namespace std;
 
-class Settings {
+class Settings
+{
 private:
 	int readSettings();
 	void setDefaultSettings();
+
 public:
 	Settings();
 	~Settings() {};
-	void setOptionalArgs(int argc, char* argv[]);
+	void setOptionalArgs(int argc, char *argv[]);
 	void outputSettings();
 
-	//int nSavitzkyGolaySmoothingPoint;
+	// int nSavitzkyGolaySmoothingPoint;
 	double ratioPeakHeightThreshold;
 	double bindingEnergyCutoffs[2];
 	int maxLoopIterativeShirley;
 	bool allowNegativeIterativeShirley;
-	//bool allowHigherEdgeActive;
-	//bool allowLowerEdgeActive;
+	// bool allowHigherEdgeActive;
+	// bool allowLowerEdgeActive;
 	double lorentzRatioCutoffs[2];
-	double minimumPeakFWHM;  //shinotsuka20180228
-	double minimumPeakAreaRatio;  //shinotsuka20180530
-	double allowedNegativeRatio;  //shinotsuka20180601
+	double minimumPeakFWHM;		 // shinotsuka20180228
+	double minimumPeakAreaRatio; // shinotsuka20180530
+	double allowedNegativeRatio; // shinotsuka20180601
 
 	double spectrum_min;
 	double spectrum_max;
@@ -39,5 +41,5 @@ public:
 	double bindingEnergy_min;
 	double bindingEnergy_max;
 	double bindingEnergy_range;
-	string backgroundType;  // "Shirley" (TODO: "Linear")
+	string backgroundType; // "Shirley" (TODO: "Linear")
 };

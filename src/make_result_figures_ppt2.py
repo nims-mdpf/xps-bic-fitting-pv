@@ -7,15 +7,16 @@
 #     Hiroshi Shinotsuka
 # ------------------------------------------------------------
 # coding: utf-8
+import os
+import re
+import sys
+from glob import glob
+
 import numpy as np
 import pandas as pd
-from glob import glob
 from pptx import Presentation
-from pptx.util import Pt
 from pptx.enum.text import PP_ALIGN
-import os
-import sys
-import re
+from pptx.util import Pt
 
 # import os, sys; sys.path.append(os.path.expanduser("~")); from mytemplate import init_figure, init_pptx, pptx_layout_figures
 
@@ -103,7 +104,9 @@ def pptx_layout_figures(ppt, figPathList, nx=None, title=None, spacer=0):
 
     # テキスト
     if title is not None:
-        txBox = slide.shapes.add_textbox(int(width * 0), 0.0, int(width), int(height * 0.08))
+        txBox = slide.shapes.add_textbox(
+            int(width * 0), 0.0, int(width), int(height * 0.08)
+        )
         tf = txBox.text_frame
         tf.text = title
         tf.paragraphs[0].font.size = Pt(20)
@@ -197,9 +200,9 @@ def getFigList2():
             mSG = match.groups()[3]
         figListData.append([rank, numPeak, method, mSG, f])
 
-    figListDf = pd.DataFrame(np.array(figListData), columns=["rank", "numPeak", "method", "mSG", "filename"]).astype(
-        {"rank": int, "numPeak": int, "mSG": int}
-    )
+    figListDf = pd.DataFrame(
+        np.array(figListData), columns=["rank", "numPeak", "method", "mSG", "filename"]
+    ).astype({"rank": int, "numPeak": int, "mSG": int})
     # figListDf.sort_values('rank', inplace=True)
     # figListDf.sort_values('numPeak', inplace=True)
     figListDf.sort_values(by=["numPeak", "rank"], inplace=True)
@@ -210,7 +213,16 @@ def getFigList2():
 
 
 # ------------------------------------------------------------------
-def set_text(slide, msg, text_left, text_top, text_width, text_height, fontsize=16, alignment=PP_ALIGN.CENTER):
+def set_text(
+    slide,
+    msg,
+    text_left,
+    text_top,
+    text_width,
+    text_height,
+    fontsize=16,
+    alignment=PP_ALIGN.CENTER,
+):
     txBox = slide.shapes.add_textbox(text_left, text_top, text_width, text_height)
     tf = txBox.text_frame
     tf.text = msg
@@ -230,7 +242,6 @@ def get_numPeak(fnm):
 # ------------------------------------------------------------------
 
 if __name__ == "__main__":
-
     figListDf = getFigList2()
 
     # Presentationインスタンスの作成。16:9サイズにするためにslide_height = 5143500とする。標準は6858000。
@@ -250,7 +261,16 @@ if __name__ == "__main__":
     text_top = int(height * 0.0)
     text_width = int(width * 5.0 / 6.0)
     text_height = int(height * 0.06)
-    set_text(slide, text2, text_left, text_top, text_width, text_height, fontsize=16, alignment=PP_ALIGN.LEFT)
+    set_text(
+        slide,
+        text2,
+        text_left,
+        text_top,
+        text_width,
+        text_height,
+        fontsize=16,
+        alignment=PP_ALIGN.LEFT,
+    )
 
     text_left = int(width * 0.0)
     text_top = int(height * 0.06)
@@ -292,7 +312,9 @@ if __name__ == "__main__":
         if os.path.exists(fig):
             print(fig)
             slide.shapes.add_picture(fig, pic_left, pic_top, pic_width, pic_height)
-            set_text(slide, text, text_left, text_top, text_width, text_height, fontsize=16)
+            set_text(
+                slide, text, text_left, text_top, text_width, text_height, fontsize=16
+            )
 
         pic_left += pic_width
         text_left += pic_width
