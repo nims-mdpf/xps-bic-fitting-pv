@@ -1,0 +1,26 @@
+CC = cl.exe /nologo
+LINK = link.exe /nologo
+RM = del.exe
+
+TARGET = activeshirley_cl.exe
+OBJ = util.obj peakseparation.obj optimizePeaks.obj calcbackgroundshirley.obj main.obj
+SRC = $(OBJ:%obj=%.cpp)
+
+CPPFLAGS = /Os /EHsc /MD
+LFLAGS = /NODEFAULTLIB:library
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(LINK) /OUT:$@ $(LFLAGS) $(OBJ)
+
+#.cpp.obj:
+#	$(CC) /Fe$@ -c $(CPPFLAGS) $<
+
+%.obj: %.cpp
+	$(CC) /Fe$@ -c $(CPPFLAGS) $<
+
+clean:
+	$(RM) /Q $(TARGET) $(OBJ)
+
+.PHONY: clean

@@ -1,0 +1,27 @@
+CC = g++
+LINK = $(CC)
+RM = rm
+
+TARGET = activeshirley_gcc_ub.exe
+OBJ = util.obj settings.obj detectpeaks.obj calcinitialbackground.obj minimumpoints.obj optimizeparameters.obj output.obj optimizeflow.obj mainflow.obj main.obj
+
+SRC = $(OBJ:%obj=%.cpp)
+
+CPPFLAGS = -O3
+#CPPFLAGS = -O3 -march=native
+CPPFLAGS += -std=c++11
+LFLAGS = -lm
+LIBS = -L/usr/lib -llapack -lblas
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(LINK) -o $@ $(LFLAGS) $(OBJ) $(LIBS)
+
+%.obj: %.cpp
+	$(CC) -o $@ -c $(CPPFLAGS) $<
+
+clean:
+	$(RM) -f $(TARGET) $(OBJ)
+
+.PHONY: clean

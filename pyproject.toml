@@ -1,0 +1,11 @@
+[project]
+name = "xps-bic-fitting-pv"
+version = "0.1.0"
+description = "BIC based fitting of XPS spectra using pseudo‑Voigt basis functions."
+requires-python = ">=3.11"
+dependencies = [
+    "numpy~=1.26.0",
+    "matplotlib~=3.9.0",
+    "pandas~=2.3.0",
+    "python-pptx==1.0.2",
+]
