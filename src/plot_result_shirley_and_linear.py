@@ -30,7 +30,7 @@ hasPIL = 1
 if hasPIL == 1:
     from io import BytesIO
 
-    from PIL import Image, ImageDraw
+    from PIL import Image
 
     def savefig_by_PIL(fig, outpath, figdpi=1000):
         png1 = BytesIO()
@@ -207,7 +207,7 @@ def get_prefered_result_by_BIC_groupbypeaks(dnm, numPeakMaxInput=None, figLevel=
 
         # '#'で始まる行を削除する。Win/Linux共用とするためにシェルを使わない
         with open(fname2) as f:
-            lines = [l for l in f.readlines() if not l.startswith("#")]
+            lines = [line for line in f.readlines() if not line.startswith("#")]
         with open(fname2, "wt") as f:
             f.write("".join(lines))
 

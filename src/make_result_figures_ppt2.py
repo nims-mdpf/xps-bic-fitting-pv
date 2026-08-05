@@ -14,6 +14,7 @@ from glob import glob
 
 import numpy as np
 import pandas as pd
+from PIL import Image
 from pptx import Presentation
 from pptx.enum.text import PP_ALIGN
 from pptx.util import Pt
@@ -168,18 +169,13 @@ def getFigList():
         if cnt >= 18:
             break
     #
-    figList = np.where((figList == None), "", figList)
+    figList = np.where((figList is None), "", figList)
     # print(figList)
     return figList
 
 
 # ------------------------------------------------------------------
 def getFigList2():
-    figList = []
-
-    # 1st figure is BIC vs Number of peaks
-    # figList.append("BIC_vs_NumPeak.png")
-
     figListTemp = glob("gbp_rank*_numPeak*_*_mSG*_result.png")
     if len(figListTemp) == 0:
         print("Error. No result found")
@@ -208,7 +204,6 @@ def getFigList2():
     figListDf.sort_values(by=["numPeak", "rank"], inplace=True)
     # print(figListDf)
 
-    # print(figList)
     return figListDf
 
 

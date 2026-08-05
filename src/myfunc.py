@@ -35,10 +35,10 @@ def calc_AIC_BIC(
         idLower = idLowerS
     else:
         # df1 = df[np.isnan(df.background) == False]
-        df1 = df[pd.isnull(df.background) == False]
+        df1 = df[not pd.isnull(df.background)]
 
         df2 = df1
-        if type(df1.background[0]) == object:
+        if type(df1.background[0]) is object:
             df2 = df1[df1.background != "-nan(ind)"]
         else:
             df2 = df1
