@@ -299,96 +299,15 @@ void mainFlow(const vector<double> &originalBindingEnergy,
 // printf("omp_get_num_threads() = %d\n", omp_get_num_threads( ));
 // Parallelization by openMP
 // 序盤にピーク本数の多いモデルが集まっているのでチャンクサイズ＝１がベスト
-// #pragma omp parallel for
-#pragma omp parallel for schedule(static, 1)
+// #pragma omp parallel for schedule(static, 1)
+#pragma omp parallel for
 	for (int ll = 0; ll < numModel; ll++)
 	{
 		optimizeFlow_wrapper(optModelList[ll]);
 	}
 
-	// // Start optimization
-	// for (OptimalModel *om : optModelList)
-	// {
-	// 	cout << endl << "Optimization for m_SG = " << om->mSG << endl;
-
-	// 	//if (om->mSG == 2400) {
-	// 	//	cout << "Press any key";
-	// 	//	getchar();
-	// 	//}
-
-	// 	// Slice between [idHigherGlobal, idLowerGlobal]
-	// 	int ndata = idLowerGlobal - idHigherGlobal + 1;
-	// 	int m_SG = om->mSG;
-	// 	vector<double> bindingEnergySlice = cutoffEnergyRange(originalBindingEnergy, idHigherGlobal, idLowerGlobal);
-	// 	vector<double> spectrumSlice = cutoffEnergyRange(originalSpectrum, idHigherGlobal, idLowerGlobal);
-	// 	vector<double> backgroundSlice = cutoffEnergyRange(om->background, idHigherGlobal, idLowerGlobal);
-
-	// 	vector<PeakParameter*> peakList_Temp = om->peakList;
-
-	// 	vector<double> sumSpectrum;
-	// 	double chi2_new, aic_poisson_new, bic_poisson_new, reduced_chi2_new, scalingfactor, aic_gauss_new, bic_gauss_new, caic_poisson, caic_gauss;
-	// 	double bgHigher = om->background.front();
-	// 	double bgLower = om->background.back();
-
-	// 	// make sure to get positive chi-square, BG must be positive.
-	// 	bgHigher = max(bgHigher, 1e-15);
-	// 	bgLower = max(bgLower, 1e-15);
-
-	// 	bool isConverged = false;
-	// 	int numTotalOptimizeLoop = 0;
-	// 	int outerOptimizeLoop = 0;
-
-	// 	// Optimize paramters between [idHigherGlobal, idLowerGlobal]
-	// 	if (optimizeFlow(ndata, m_SG, bindingEnergySlice, spectrumSlice, backgroundSlice,
-	// 		settings, peakList_Temp,
-	// 		sumSpectrum, chi2_new, aic_poisson_new, bic_poisson_new, reduced_chi2_new,
-	// 		bgHigher, bgLower, scalingfactor, aic_gauss_new, bic_gauss_new, caic_poisson, caic_gauss,
-	// 		isConverged, numTotalOptimizeLoop, outerOptimizeLoop)) {
-	// 		cout << "Warning at peakSeparationMain()." << endl;
-	// 		exit(1);
-	// 	}
-
-	// 	double min_width, max_width;
-	// 	summarize_peakList(peakList_Temp, min_width, max_width);
-
-	// 	cout << m_SG << "," << peakList_Temp.size() << "," << chi2_new << "," << reduced_chi2_new << endl;
-	// 	ss << m_SG << "," << peakList_Temp.size() << "," << chi2_new << "," << chi2_new << "," << reduced_chi2_new;
-	// 	ss << "," << aic_poisson_new;
-	// 	ss << "," << bic_poisson_new;
-	// 	ss << "," << aic_gauss_new;
-	// 	ss << "," << bic_gauss_new;
-	// 	ss << "," << min_width;
-	// 	ss << "," << max_width;
-	// 	ss << "," << scalingfactor;
-	// 	ss << "," << caic_poisson;
-	// 	ss << "," << caic_gauss;
-	// 	ss << "," << om->sg_window;
-	// 	ss << "," << isConverged;
-	// 	ss << "," << numTotalOptimizeLoop;
-	// 	ss << "," << outerOptimizeLoop;
-	// 	ss << endl;
-
-	// 	//Output all figures for m_SG
-	// 	if (1) {
-	// 		ostringstream oss;
-	// 		oss << setw(4) << setfill('0') << m_SG;
-	// 		output_result("peak_search_mSG" + oss.str(), bindingEnergySlice, spectrumSlice, backgroundSlice, peakList_Temp, originalBindingEnergy, originalSpectrum, idHigherGlobal, idLowerGlobal, om->smoothedSpectrum, settings);
-	// 	}
-
-	// }
-
-	// ofs << ss.str();
-	// ofs.close();
-
 	mytimer.show("after optimization");
 	cout << "mainFlow() finished" << endl;
-
-	// outputBackgroundList(bindingEnergy_best, spectrum_best, minimumPointsList_best, backgroundList_best);
-	// outputBackground(bindingEnergy_best, spectrum_best, initBackground_best, diffSpectrum_best);
-	// outputMinimumPoints("minimumPoints_search", originalBindingEnergy, originalSpectrum, minimumPointsList_best);
-	// outputMaximumPoints("maximumPoints_search", originalBindingEnergy, originalSpectrum, maximumPointsList_best);
-	// output_result("peak_search", bindingEnergy_best, spectrum_best, background_best, peakList_best, originalBindingEnergy, originalSpectrum, idHigher_best, idLower_best, smoothedSpectrum_best, settings);
-	// outputSavitzkyGolay(bindingEnergy_best, diffSpectrum_best, smoothedSpectrum_best, thirdDerivative_best);
 }
 
 void optimizeFlow_wrapper(OptimalModel *om)
@@ -411,7 +330,13 @@ void optimizeFlow_wrapper(OptimalModel *om)
 	// vector<double> thirdDerivativeSlice = cutoffEnergyRange(om->thirdDerivative, idHigherGlobal, idLowerGlobal);
 	// vector<double> diffSpectrumSlice = cutoffEnergyRange(om->diffSpectrum, idHigherGlobal, idLowerGlobal);
 
-	vector<PeakParameter *> peakList_Temp = om->peakList;
+	// vector<PeakParameter *> peakList_Temp = om->peakList;
+	vector<PeakParameter *> peakList_Temp;
+
+	for (auto p : om->peakList)
+	{
+		peakList_Temp.push_back(new PeakParameter(*p));
+	}
 
 	vector<double> sumSpectrum;
 	double chi2_new, aic_poisson_new, bic_poisson_new, reduced_chi2_new, scalingfactor, aic_gauss_new, bic_gauss_new, caic_poisson, caic_gauss;
@@ -437,23 +362,6 @@ void optimizeFlow_wrapper(OptimalModel *om)
 		cout << "Warning at peakSeparationMain()." << endl;
 		exit(1);
 	}
-
-	// double min_width, max_width;
-	// summarize_peakList(peakList_Temp, min_width, max_width);
-
-	// cout << m_SG << "," << peakList_Temp.size() << "," << chi2_new << "," << reduced_chi2_new << endl;
-	// ss << m_SG << "," << peakList_Temp.size() << "," << chi2_new << "," << chi2_new << "," << reduced_chi2_new;
-	// ss << "," << aic_poisson_new;
-	// ss << "," << bic_poisson_new;
-	// ss << "," << aic_gauss_new;
-	// ss << "," << bic_gauss_new;
-	// ss << "," << min_width;
-	// ss << "," << max_width;
-	// ss << "," << scalingfactor;
-	// ss << "," << caic_poisson;
-	// ss << "," << caic_gauss;
-	// ss << "," << om->sg_window;
-	// ss << endl;
 
 	// Output all figures for m_SG
 	if (1)

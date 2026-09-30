@@ -484,6 +484,9 @@ def myplot_aic_bic(idHigherS, idLowerS, paper=False, figLevel=2):
 
         data_list.append(result)
 
+    if len(data_list) == 0:
+        raise ValueError("No data found in myplot_aic_bic")
+
     data_list = np.array(data_list)
     columns2 = [
         "method",
